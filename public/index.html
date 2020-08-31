@@ -1,0 +1,306 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Made Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="moment.js"></script>
+    <link rel="shortcut icon" href="">
+    <link href="/styles.css" rel="stylesheet" />
+
+</head>
+<body>
+<div id = liveDownTime>
+    <p id = counter> </p></div>
+<div id = errorCode>
+    <p id = message>*Processes Per Minute </p></div>
+</div>
+
+<div id = statusIcon>
+    <img id = iconStat src='' /></div>
+<div id = larry1>
+    <div id = mainLogo>
+        <img id = logo src='larrylogo.png'>
+    </div>
+
+    <center><title1>Server Monitor</title1></center>
+
+    <center><table id = myTable>
+        <tr id = tableHead>
+
+            <th><larry>Droplet Name</larry></th>
+            <th><larry>Used Disk Amount</larry></th>
+            <th><larry>Up-Time</larry></th>
+            <th><larry>Memory</larry></th>
+            <th><larry>Load Average</larry></th>
+            <th><larry>Network-IP</larry></th>
+            <th><larry>MAC Address</larry></th>
+
+
+        </tr>
+
+    </table></center>
+
+    <script>
+        let msg;
+        let webSocket = io.connect(location.host);
+        let counter = 0;
+        let minicounter = 0;
+        let rowCount = 0;
+        let index = 0;
+        let superCount = 0;
+        let rowAdjust = 0;
+        let solidCount = 0;
+
+
+
+
+
+
+
+        webSocket.on('html', function(data) {
+            try {
+                msg = JSON.parse(data);
+
+                switch (msg.type) {
+
+                    case 'insertThem': <!--this case uses two counters to make the height and width of the table, each cell within has its own cell ID -->
+
+                        insertRow(counter, rowCount);
+                        counter++;
+                        rowCount++;
+                        solidCount++;
+                        console.log('rows inserted....')
+                        console.log('counter: ' + counter)
+                        if(solidCount >= counter + counter){
+                            document.getElementById('myTable').deleteRow(-1)
+
+                        };
+
+
+
+
+
+                        break;
+
+                    case 'updatePage':<!--this uses the 'Update function' to populate each cell with the appropriate api information from the pushed array -->
+                        console.log('process Array: ' + JSON.stringify(msg.data[0]))
+                        console.log('process Array: ' + JSON.stringify(msg.data[1]))
+                        console.log('process Array: ' + JSON.stringify(msg.data[2]))
+                        console.log('process Array: ' + JSON.stringify(msg.data[3]))
+
+                        webSocket.emit('makeArray', JSON.stringify({type: 'resetCount'}));
+
+
+                        if(index < msg.data.length && minicounter < msg.data.length){
+                            if(msg.data[index].uptime !== 0){
+                                let newDisk = Math.round(msg.data[index].disk/1000000000);//using simple math to make api values format correctly (this happens every 3500 mil/sec..
+                                let newMem = Math.round( msg.data[index].memory/1000000);
+                                let newMAC = msg.data[index].networkIn['eth0'][0]['mac'];
+                                let newIP = msg.data[index].networkIn['eth0'][0]['address'];
+                                let newMoment = moment.duration(msg.data[index].uptime, "seconds").humanize();
+
+                                Update (msg.data[index].name, newDisk + '%', newMoment, newMem + ' MB', msg.data[index].loader[0].toFixed(2)+ ' ppm*', newIP, newMAC, minicounter);
+
+
+                                minicounter++;
+                                index++;
+                            }else{
+                                let newDisk = Math.round(msg.data[index].disk/1000000000);//using simple math to make api values format correctly (this happens every 3500 mil/sec..
+                                let newMem = Math.round( msg.data[index].memory/1000000);
+                                let newMAC = msg.data[index].networkIn['eth0'][0]['mac'];
+                                let newIP = msg.data[index].networkIn['eth0'][0]['address'];
+                                let newMoment = '';
+
+                                Update (msg.data[index].name, newDisk + '%', newMoment, newMem + ' MB', msg.data[index].loader[0].toFixed(2)+ ' ppm*', newIP, newMAC, minicounter);
+
+                                minicounter++;
+                                index++;
+                            };
+
+
+
+                        }else{
+
+                            index = 0;
+                            minicounter = rowAdjust;
+                            if(msg.data[index].uptime !== 0){
+                                let newDisk = Math.round(msg.data[index].disk/1000000000);//using simple math to make api values format correctly (this happens every 3500 mil/sec..
+                                let newMem = Math.round( msg.data[index].memory/1000000);
+                                let newMAC = msg.data[index].networkIn['eth0'][0]['mac'];
+                                let newIP = msg.data[index].networkIn['eth0'][0]['address'];
+                                let newMoment = moment.duration(msg.data[index].uptime, "seconds").humanize();
+
+                                Update (msg.data[index].name, newDisk + '%', newMoment, newMem + ' MB', msg.data[index].loader[0].toFixed(2)+ ' ppm*', newIP, newMAC, minicounter);
+
+
+                                minicounter++;//
+                                index++;
+                            }else{
+                                let newDisk = Math.round(msg.data[index].disk/1000000000);//using simple math to make api values format correctly (this happens every 3500 mil/sec..
+                                let newMem = Math.round( msg.data[index].memory/1000000);
+                                let newMAC = msg.data[index].networkIn['eth0'][0]['mac'];
+                                let newIP = msg.data[index].networkIn['eth0'][0]['address'];
+                                let newMoment = '';
+
+                                Update (msg.data[index].name, newDisk + '%', newMoment, newMem + ' MB', msg.data[index].loader[0].toFixed(2)+ ' ppm*', newIP, newMAC, minicounter);
+
+                                minicounter++;
+                                index++;
+                            };
+
+                        };
+                        break;
+
+
+                    case 'status': //changes the status icon on the top right of the screen in case the server stops responding...
+                        document.getElementById('iconStat').src = msg.data;
+                        break;
+
+
+                    case 'restart': //changes the status icon on the top right of the screen in case the server stops responding...
+                        document.getElementById('rMessage').src = msg.data;
+                        break;
+
+
+                    case 'downedDrop':
+                        removeArrayValue(msg.name, msg.pA, msg.index)
+                        break;
+
+
+                    case 'getDownName':
+                        webSocket.emit('makeArray', JSON.stringify({type: 'nameFind', data2: msg.data}));//finds the name of the droplet that went down
+                        //goes to downedDrop case
+                        break;
+
+
+                    case 'downTime':
+                        let myCount = 'cell'+ msg.count + '2' ;
+                        document.getElementById(myCount).innerHTML =  moment.duration(msg.counter, "seconds").humanize();
+                        break;
+
+
+                    case 'meetup': //will send every few second...
+                        webSocket.emit('makeArray', JSON.stringify({type: 'make', data: msg.data, htmlCounter: counter}))
+                        break;
+
+
+                    case 'start':
+                        counter = 0;
+                        rowCount = 0;
+                        superCount = 0;
+                        rowAdjust = 0;
+                        break;
+
+
+                    case 'superCounter++':
+                        superCount++;
+
+                        break;
+
+
+                    case 'transfer':
+                        webSocket.emit('makeArray', JSON.stringify({type: 'timer', number: msg.number}))
+                        break;
+
+
+                    case 'send':
+                        let cell = 'cell' + msg.number+ '2'
+                        document.getElementById(cell).innerText = moment.duration(msg.timer, "seconds").humanize()
+                        webSocket.emit('makeArray', JSON.stringify({type: 'receive', timer: msg.timer}))
+                        break;
+
+
+                    case 'delete':
+                        document.getElementById('myTable').deleteRow(-1)
+                        break;
+                    default:
+                        break;
+                };
+
+            } catch (ex) {
+
+            };
+        });
+
+        function removeArrayValue(name, pA, index){
+            let count = 0;
+            while(count < pA.length){
+                if(name === pA[count].name){
+                    webSocket.emit('makeArray', JSON.stringify({type: 'adjustArray', data: count, index: index}))
+                    count++;
+                }else{
+                    count++;
+                };
+            };
+        };
+
+        function insertRow(counter, rowCount){
+            let hold=[];
+            let rowHold=[];
+            let count=0;
+            rowHold[rowCount] = document.getElementById('myTable').insertRow(-1);
+            rowHold[rowCount].id = 'row' + rowCount
+
+
+
+            hold[count] = rowHold[rowCount].insertCell(0);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(1);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(2);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(3);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(4);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(5);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+            hold[count] = rowHold[rowCount].insertCell(6);
+            hold[count].id = 'cell'+ rowCount + count;
+            count++;
+
+
+
+        };
+        function Update(name, disk, uptime, memry, load, networkIn, macAddress, minicounter){
+            let count2 = 0;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = name;//0
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = disk;//1
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = uptime;//2
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = memry;//3
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = load;//4
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = networkIn;//5
+            count2++;
+            document.getElementById('cell' + minicounter + count2  ).innerHTML = macAddress;//6
+            count2++;
+
+        };
+
+
+    </script>
+
+</div>
+</div>
+</body>
+</html>

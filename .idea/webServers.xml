@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0e3f0c60-3aab-44e4-b35e-11b9c5319def" name="DropletmV2">
+        <fileTransfer rootFolder="/root/piemonv2test" accessType="SFTP" host="159.203.124.198" port="22" sshConfigId="398e5a37-240b-4de3-9aa6-59a82189164c" sshConfig="root@159.203.124.198:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
