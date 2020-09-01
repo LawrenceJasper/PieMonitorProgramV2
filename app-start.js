@@ -4,10 +4,13 @@ let io;
 let app = express();
 let net = require('net');
 let socket = require('socket.io');
-let isPortReachable = require('is-port-reachable');
 let serverNet = net.createServer();
 let server;
-let mainCounter = 0;
+let down;
+let mainCount = 0;
+let holder = [];
+let hold;
+let myIndex;
 let counter0 = 0;
 let counter2 = 1;
 let counter3 = 0;
@@ -15,7 +18,7 @@ let counter4 = 0;
 let counter5 = 0;
 let processArray =[];
 let ipObjectArray =[];
-let msg;//might not need
+let boolean = false;
 let dropletTimer = 900;
 let downTimeTimer = 1000;
 
@@ -23,21 +26,26 @@ let downTimeTimer = 1000;
         function startNetServer() {
             serverNet.listen(1234, '159.203.124.198', function () {
                 console.log('NetServer Started... ')
-                //checkPort();
+
 
 
                 serverNet.on('connection', (socket) => {
                     console.log('New Connection..');
-                    socket.write(JSON.stringify({type: 'connect'}));
+                  //  console.log(socket.remotePort)
+                    socket.write(JSON.stringify({type: 'connect', data:socket.remotePort}));
 
 
                     socket.on('end', function () {
                         console.log('Closing connection with the client');
+                        checkPort(socket.remotePort);
+                        io.emit('html', JSON.stringify({type: 'counterAdjust'}))
 
 
                     });
+
                     socket.on('error', function (err) {
-                        console.log(`Error: ${err}`);
+                        //console.log(`Error: ${err}`);
+
                     });
                     socket.on('data', function (data) {
                         try {
@@ -46,9 +54,20 @@ let downTimeTimer = 1000;
                             switch (msg.type) {
 
                                 case 'cack':
-                                    console.log('made it to cack...')
+                                    console.log('msg.data ' + msg.data.name)
+                                    console.log('hold ' + hold)
+                                    if(msg.data.name === hold){
+                                        console.log('right before')
+                                        clearInterval(holder[myIndex])
+                                        clearInterval(holder[myIndex])
+                                        console.log('right after')
+
+                                        boolean = false
+                                        console.log('interval cleared')
+                                    }
                                     ipObjectArray.push(msg.ip)
-                                    console.log('cack, msg.data: ' + JSON.stringify(msg.data))//sends the correct information
+                                    //console.log('offical socket id '+msg.data.socketID)
+
                                     io.emit('html', (JSON.stringify({type: 'insertThem', data: msg.data})));//
 
 
@@ -56,9 +75,26 @@ let downTimeTimer = 1000;
 
                                     break;
                                 case 'updateServer':
-                                    counter3 = 0;//might not need
+
                                     //console.log('update Server info'+JSON.stringify(msg.data))
                                     io.emit('html', (JSON.stringify({type: 'meetup', data: msg.data})));
+                                    counter3++
+                                    if(counter3 > 3){
+                                        io.emit('html', JSON.stringify({type: 'status', data: 'syellow.png'}))
+                                    }else if(counter3 > 6){
+                                        io.emit('html', JSON.stringify({type: 'status', data: 'newred.png'}))
+                                    }
+
+                                    break;
+                                case 'onEnd':
+                                    console.log('on end..' +msg.data)
+                                    processArray.forEach(function (item){
+                                        if(processArray[item].networkIn['eth0'][0]['address'] === msg.data){
+                                            setInterval(downTimeMaker, 1000, item)
+
+                                        };
+                                });
+
 
                                     break;
                                 default:
@@ -74,15 +110,12 @@ let downTimeTimer = 1000;
                     });
 
                     function resendFunc() {
-                        socket.write(JSON.stringify({type: 'resend'}));//asks the client for constant updates...
+                       // console.log('remote port: ' + socket.remotePort)
+                        socket.write(JSON.stringify({type: 'resend', data: socket.remotePort}));//asks the client for constant updates...
                     }
                 });
             });
         };
-
-// function resendFunc(){
-//     socket.write(JSON.stringify({type: 'resend'}));//asks the server for constant updates...
-// }
 
         function startIOServer() {
             server = app.listen(2222, function () {
@@ -100,11 +133,7 @@ let downTimeTimer = 1000;
 
                     io.emit('html', JSON.stringify({type: 'status', data: 'newgreen.png'}));
 
-                    //mainCounter = 0;
                     counter2 = 1;
-                   // console.log('counter2 ' + counter2 + 'mainCounter ' + mainCounter)
-                    //startNetServer();
-                    //checkPort();
 
                     socket.on('makeArray', function (data) {
 
@@ -113,6 +142,7 @@ let downTimeTimer = 1000;
 
                         switch (msg.type) {
                             case 'make': // should fire every three seconds...
+                                counter3 = 0;
                                 let check = processArray.findIndex(element => element.name === msg.data.name);
 
                                 if(counter2 === msg.htmlCounter && check === -1){
@@ -170,6 +200,13 @@ let downTimeTimer = 1000;
                             case 'receive':
                                 io.emit('html', JSON.stringify({type: 'updatePage', timer: msg.timer}));
                                 break;
+                            case 'here':
+                                console.log('name, msg.data: ' + msg.data)
+
+                                hold = msg.data;
+                                myIndex = msg.index
+                                console.log('name, hold ' + hold)
+                                break;
                             default:
                                 break;
                         }
@@ -190,14 +227,10 @@ let downTimeTimer = 1000;
 ///functions that I need to take a new look at...
 
 
-        function createIpObjectArray(ipInfo) {
-            ipObjectArray.push(ipInfo)
-        };
+        function downTimeMaker(index) {
 
-        function downTimeMaker(data, index) {
             let name = processArray[index]['name']
             let newObj = {
-                id: processArray[index]['id'],
                 name: name,
                 uptime: counter0,
                 disk: '',//
@@ -216,40 +249,66 @@ let downTimeTimer = 1000;
 
             processArray.splice(index, 1, newObj);
             console.log(name)
-            console.log('process Array: ' + JSON.stringify(processArray[0].name))
-            console.log('process Array: ' + JSON.stringify(processArray[1].name))
-            console.log('process Array: ' + JSON.stringify(processArray[2].name))
-            console.log('process Array: ' + JSON.stringify(processArray[3].name))
             console.log('splice done')
+            if(boolean === false){
+                console.log('name: ' + name)
+                io.emit('html', JSON.stringify({type: 'reRoute', data: name, index: index}))
+                boolean = true
+            }
+
         };
 
-        function checkPort() {// dynamically works depending on how many ip addresses and ports are added...
-            (async () => {
-                let x = 0;
-                let resultArray = []
-                let makeClient = []
-                let clientOFF = [];
-                console.log('ip array length: ' + ipObjectArray.length)
-                console.log(JSON.stringify(ipObjectArray))
-                while (x < ipObjectArray.length) {//while x is less then the length if my ip array
-                    resultArray[x] = await isPortReachable(ipObjectArray[x].port, {host: ipObjectArray[x].ip});//check if online
-                    console.log(JSON.stringify(ipObjectArray[x]) + 'result: ' + JSON.stringify(resultArray[x]))
-                    if (resultArray[x] === true) {//result, if true
-                        io.emit('html', JSON.stringify({type: 'insertThem'}))
-                        x++;//count
-                    } else {
-                        clientOFF.push(resultArray[x]);
-                        x++;
-                    }
-                    ;
+        function checkPort(socket) {// dynamically works depending on how many ip addresses and ports are added...
+            let x = 0;
+            while(x < processArray.length){
+                if(processArray[x].socketID === socket){
+                   holder[x]= setInterval(downTimeMaker, 1000, x)
+                    x++;
+                }else{
+                    x++;
+                };
 
+            };
+
+        };
+
+                   /* if (resultArray[x] === false) {//result, if true
+
+                        while (y < processArray.length) {
+                            if (processArray[y].networkIn['eth0'][0]['address'] === ipObjectArray[x].ip) {
+                                console.log('ProcessArray index at: ' + y + ' ' + processArray[y].networkIn['eth0'][0]['address'])
+                                console.log('ipObjectArray: ' + ipObjectArray[hold].ip)
+                                console.log('yes, it works..., this is the y(index) value: ' + y)
+                                console.log('process Array 0: ' + JSON.stringify(processArray[0].name))
+                                console.log('process Array 1: ' + JSON.stringify(processArray[1].name))
+                                console.log('process Array 2: ' + JSON.stringify(processArray[2].name))
+                                setInterval(downTimeMaker, 1000, y)
+                                y++;
+                                x++;
+
+                            } else {
+                               y++;
+                               x++;
+                            }
+                            ;
+
+                        }
+                    } else {
+                       x++;
+                    }
 
                 }
-                ;
+
+
+
+
+
 
 
             })();
         };
+
+
 
         function DropletDownTimer(x) {
             let count = 0;
@@ -270,7 +329,7 @@ let downTimeTimer = 1000;
             ;
 
         };
-
+*/
 
         function DropletDownNameFinder(x) {
             let checkerCount = 0;

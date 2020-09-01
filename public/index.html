@@ -61,6 +61,8 @@
 
 
 
+
+
         webSocket.on('html', function(data) {
             try {
                 msg = JSON.parse(data);
@@ -68,17 +70,20 @@
                 switch (msg.type) {
 
                     case 'insertThem': <!--this case uses two counters to make the height and width of the table, each cell within has its own cell ID -->
-
                         insertRow(counter, rowCount);
                         counter++;
                         rowCount++;
                         solidCount++;
                         console.log('rows inserted....')
                         console.log('counter: ' + counter)
-                        if(solidCount >= counter + counter){
+                        if(solidCount > counter){
                             document.getElementById('myTable').deleteRow(-1)
+                            counter++;
 
                         };
+
+
+
 
 
 
@@ -216,6 +221,15 @@
 
                     case 'delete':
                         document.getElementById('myTable').deleteRow(-1)
+                        break;
+                    case 'counterAdjust':
+                        counter--;
+
+                        break;
+                    case 'reRoute':
+                        console.log('reroute: ' + msg.data)
+                        webSocket.emit('makeArray', JSON.stringify({type: 'here', data: msg.data, index: msg.index}))
+
                         break;
                     default:
                         break;
