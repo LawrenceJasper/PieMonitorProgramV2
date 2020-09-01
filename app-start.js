@@ -6,21 +6,16 @@ let net = require('net');
 let socket = require('socket.io');
 let serverNet = net.createServer();
 let server;
-let down;
-let mainCount = 0;
 let holder = [];
 let hold;
 let myIndex;
 let counter0 = 0;
 let counter2 = 1;
 let counter3 = 0;
-let counter4 = 0;
-let counter5 = 0;
 let processArray =[];
 let ipObjectArray =[];
 let boolean = false;
 let dropletTimer = 900;
-let downTimeTimer = 1000;
 
 
         function startNetServer() {
@@ -31,12 +26,12 @@ let downTimeTimer = 1000;
 
                 serverNet.on('connection', (socket) => {
                     console.log('New Connection..');
-                  //  console.log(socket.remotePort)
                     socket.write(JSON.stringify({type: 'connect', data:socket.remotePort}));
 
 
                     socket.on('end', function () {
                         console.log('Closing connection with the client');
+                        io.emit('html', JSON.stringify({type: 'status', data: 'newred.png'}))
                         checkPort(socket.remotePort);
                         io.emit('html', JSON.stringify({type: 'counterAdjust'}))
 
@@ -61,12 +56,11 @@ let downTimeTimer = 1000;
                                         clearInterval(holder[myIndex])
                                         clearInterval(holder[myIndex])
                                         console.log('right after')
-
                                         boolean = false
                                         console.log('interval cleared')
+                                        io.emit('html', JSON.stringify({type: 'status', data: 'newgreen.png'}))
                                     }
                                     ipObjectArray.push(msg.ip)
-                                    //console.log('offical socket id '+msg.data.socketID)
 
                                     io.emit('html', (JSON.stringify({type: 'insertThem', data: msg.data})));//
 
@@ -74,9 +68,9 @@ let downTimeTimer = 1000;
                                     setInterval(resendFunc, dropletTimer);//keep sending every 2 seconds.
 
                                     break;
+
                                 case 'updateServer':
 
-                                    //console.log('update Server info'+JSON.stringify(msg.data))
                                     io.emit('html', (JSON.stringify({type: 'meetup', data: msg.data})));
                                     counter3++
                                     if(counter3 > 3){
@@ -84,17 +78,6 @@ let downTimeTimer = 1000;
                                     }else if(counter3 > 6){
                                         io.emit('html', JSON.stringify({type: 'status', data: 'newred.png'}))
                                     }
-
-                                    break;
-                                case 'onEnd':
-                                    console.log('on end..' +msg.data)
-                                    processArray.forEach(function (item){
-                                        if(processArray[item].networkIn['eth0'][0]['address'] === msg.data){
-                                            setInterval(downTimeMaker, 1000, item)
-
-                                        };
-                                });
-
 
                                     break;
                                 default:
@@ -110,7 +93,6 @@ let downTimeTimer = 1000;
                     });
 
                     function resendFunc() {
-                       // console.log('remote port: ' + socket.remotePort)
                         socket.write(JSON.stringify({type: 'resend', data: socket.remotePort}));//asks the client for constant updates...
                     }
                 });
@@ -156,50 +138,6 @@ let downTimeTimer = 1000;
                                 };
 
                                 break;
-                            case 'resetCount':
-                                counter5 = 0;
-                                break;
-
-                            case 'resetCount2':
-                                counter2 = 0;
-                                break;
-
-                            case 'nameFind':
-                                let num = msg.data2
-                                DropletDownNameFinder(num);
-                                break;
-
-                            case 'resetCells':
-                                io.emit('html', JSON.stringify({type: 'insertThem'}));
-                                break;
-
-                            case 'timer':
-                                DropletDownTimer(msg.number);
-                                break;
-
-                            case 'down':
-
-                            function downTimeFunc() {
-                                downTime++;
-                                io.emit('html', JSON.stringify({
-                                    type: 'downTime',
-                                    cellData: msg.cell2,
-                                    downTime1: downTime
-                                }));
-
-                            };
-                                setInterval(downTimeFunc, downTimeTimer);
-                                break;
-
-                            case 'adjustArray':
-                                //used to have object here
-                                setInterval(downTimeMaker, 1000, msg.index, msg.data);
-
-
-                                break;
-                            case 'receive':
-                                io.emit('html', JSON.stringify({type: 'updatePage', timer: msg.timer}));
-                                break;
                             case 'here':
                                 console.log('name, msg.data: ' + msg.data)
 
@@ -221,25 +159,19 @@ let downTimeTimer = 1000;
         };//end func
 
 
-
-
-
-///functions that I need to take a new look at...
-
-
         function downTimeMaker(index) {
 
             let name = processArray[index]['name']
             let newObj = {
                 name: name,
                 uptime: counter0,
-                disk: '',//
+                disk: '',
                 memory: '',
                 loader: [0, 0, 0],
                 networkIn: {
                     eth0: [{
                         address: 'Droplet Down',
-                        mac: '',//
+                        mac: '',
                     }]
                 }
             };
@@ -272,84 +204,6 @@ let downTimeTimer = 1000;
 
         };
 
-                   /* if (resultArray[x] === false) {//result, if true
 
-                        while (y < processArray.length) {
-                            if (processArray[y].networkIn['eth0'][0]['address'] === ipObjectArray[x].ip) {
-                                console.log('ProcessArray index at: ' + y + ' ' + processArray[y].networkIn['eth0'][0]['address'])
-                                console.log('ipObjectArray: ' + ipObjectArray[hold].ip)
-                                console.log('yes, it works..., this is the y(index) value: ' + y)
-                                console.log('process Array 0: ' + JSON.stringify(processArray[0].name))
-                                console.log('process Array 1: ' + JSON.stringify(processArray[1].name))
-                                console.log('process Array 2: ' + JSON.stringify(processArray[2].name))
-                                setInterval(downTimeMaker, 1000, y)
-                                y++;
-                                x++;
-
-                            } else {
-                               y++;
-                               x++;
-                            }
-                            ;
-
-                        }
-                    } else {
-                       x++;
-                    }
-
-                }
-
-
-
-
-
-
-
-            })();
-        };
-
-
-
-        function DropletDownTimer(x) {
-            let count = 0;
-            while (count < processArray.length) {
-                if (ipObjectArray[x].ip === processArray[count].networkIn['eth0'][0]['address']) {
-                    let countHold = 0;
-                    count = countHold
-
-                    io.emit('html', JSON.stringify({type: 'downTime', count: x}))
-
-                    count++;
-                } else {
-                    count++;
-                }
-                ;
-
-            }
-            ;
-
-        };
-*/
-
-        function DropletDownNameFinder(x) {
-            let checkerCount = 0;
-            while (checkerCount < processArray.length) {
-                if (ipObjectArray[x].ip === processArray[checkerCount].networkIn['eth0'][0]['address']) {
-                    let name23 = processArray[checkerCount].name
-                    io.emit('html', JSON.stringify({type: 'downedDrop', name: name23, pA: processArray, index: x}))//names the error row cell 'name'
-
-                    console.log('name chosen!')
-                    checkerCount++;
-                } else {
-                    checkerCount++;
-                }
-                ;
-
-
-            }
-            ;
-
-
-        };
 startIOServer()
 startNetServer()

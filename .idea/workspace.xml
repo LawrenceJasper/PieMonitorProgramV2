@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f019e0a-bac7-40d1-8eac-55b00291c5f6" name="Default Changelist" comment="commit 08/31/2020">
+    <list default="true" id="9f019e0a-bac7-40d1-8eac-55b00291c5f6" name="Default Changelist" comment="commit 09/01/2020 Software has almost no bugs!&#10;downtimer is functional (not sure about multiple drops going down)&#10;droplets have the ability to resurrect!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app-start.js" beforeDir="false" afterPath="$PROJECT_DIR$/app-start.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
@@ -12,6 +12,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1gjGAYRCYoHj3JRywRZyfPrZFvm" />
@@ -23,7 +28,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../droplet4" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../untitled5" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -40,7 +45,7 @@
       <option name="presentableId" value="Default" />
       <updated>1598620444766</updated>
       <workItem from="1598620445821" duration="12574000" />
-      <workItem from="1598880337386" duration="38388000" />
+      <workItem from="1598880337386" duration="40860000" />
     </task>
     <task id="LOCAL-00001" summary="commit 08/31/2020">
       <created>1598894587439</created>
@@ -49,7 +54,14 @@
       <option name="project" value="LOCAL" />
       <updated>1598894587439</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="commit 09/01/2020 Software has almost no bugs!&#10;downtimer is functional (not sure about multiple drops going down)&#10;droplets have the ability to resurrect!">
+      <created>1598974873073</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1598974873073</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -57,7 +69,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit 08/31/2020" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit 08/31/2020" />
+    <MESSAGE value="commit 09/01/2020 Software has almost no bugs!&#10;downtimer is functional (not sure about multiple drops going down)&#10;droplets have the ability to resurrect!" />
+    <option name="LAST_COMMIT_MESSAGE" value="commit 09/01/2020 Software has almost no bugs!&#10;downtimer is functional (not sure about multiple drops going down)&#10;droplets have the ability to resurrect!" />
   </component>
   <component name="WindowStateProjectService">
     <state x="-137" y="126" key="#Deployment" timestamp="1598883287574">
@@ -68,10 +81,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="536" y="165" key="#SSH_Configurations/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598883251725" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598930192702">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1598975430874">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598930192702" />
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598975430874" />
     <state x="806" y="418" key="Github.ShareDialog" timestamp="1598894497192">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -80,17 +93,17 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="769" y="225" key="Github.UntrackedFilesDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598894511936" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1598894592377">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1598974984383">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598894592377" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598974984383" />
     <state x="647" y="393" key="run.anything.popup" timestamp="1598926429950">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="647" y="393" key="run.anything.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598926429950" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1598926445101">
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1598975984121">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598926445101" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1598975984121" />
   </component>
 </project>
